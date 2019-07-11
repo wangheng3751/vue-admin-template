@@ -1,3 +1,4 @@
+import Mock from 'mockjs'
 
 const tokens = {
   admin: {
@@ -22,6 +23,20 @@ const users = {
     name: 'Normal Editor'
   }
 }
+
+const data = Mock.mock({
+  'items|30': [{
+    id: '@id',
+    name:"用户",
+    telephone:'15887806076',
+    account:"admin",
+    email:"wangheng3751@qq.com",
+    desc:"我是用户我是用户我是用户",
+    created_at: '@datetime',
+    logged_at: '@datetime',
+    'status|1': ['published', 'draft', 'deleted']
+  }]
+})
 
 export default [
   // user login
@@ -78,6 +93,21 @@ export default [
       return {
         code: 20000,
         data: 'success'
+      }
+    }
+  },
+
+  {
+    url: '/user/list',
+    type: 'get',
+    response: config => {
+      const items = data.items
+      return {
+        code: 20000,
+        data: {
+          total: items.length,
+          items: items
+        }
       }
     }
   }
