@@ -5,7 +5,7 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
-
+import articleRouter from './modules/articleManage'
 /**
  * Note: sub-menu only appear when route children.length >= 1
  * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -53,41 +53,6 @@ export const constantRoutes = [
       component: () => import('@/views/dashboard/index'),
       meta: { title: '首页', icon: 'dashboard' }
     }]
-  },
-
-  {
-    path: '/example',
-    component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'example' },
-    children: [
-      {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
-      }
-    ]
-  },
-
-  {
-    path: '/form',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
-      }
-    ]
   }
 ]
 
@@ -96,11 +61,18 @@ export const constantRoutes = [
  * the routes that need to be dynamically loaded based on user roles
  */
 export const asyncRoutes = [
+  articleRouter,
   {
     path: '/system',
     component: Layout,
     meta: { title: '系统配置', icon: 'example' },
     children: [
+      {
+        path: 'menus',
+        name: 'SystemMenuList',
+        component: () => import('@/views/system-config/menus/list'),
+        meta: { title: '系统菜单管理', icon: 'list' }
+      },
       {
         path: 'users',
         name: 'SystemUserList',
@@ -110,7 +82,7 @@ export const asyncRoutes = [
       {
         path: 'roles',
         name: 'SystemRoleList',
-        component: () => import('@/views/system-config/users/list'),
+        component: () => import('@/views/system-config/roles/list'),
         meta: { title: '角色管理', icon: 'list' }
       }
     ]

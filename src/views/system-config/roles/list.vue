@@ -1,8 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.username" placeholder="用户名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
-      <el-input placeholder="手机号码" v-model="listQuery.telephone" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
+      <el-input v-model="listQuery.name" placeholder="名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">创建</el-button>
     </div>
@@ -16,36 +15,11 @@
       highlight-current-row
       style="width: 100%;margin-top:20px"
       @sort-change="sortChange">
-      <el-table-column label="姓名" width="90px" align="center">
+      <el-table-column label="名称" width="180px" align="center">
         <template slot-scope="scope">
           <span class="link-type">{{ scope.row.name }}</span>
         </template>
-      </el-table-column>
-      <el-table-column label="登录名" width="100px">
-        <template slot-scope="scope">
-          <span class="link-type">{{ scope.row.account }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="手机号" width="150px" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.telephone||"无" }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="邮箱" width="180px" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.email }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="创建时间" width="120px" align="center">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.created_at,'{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="最后登录时间" width="150px" align="center">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.logged_at,'{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
+      </el-table-column>    
       <el-table-column label="简介" min-width="150px">
         <template slot-scope="scope">
           <span>{{ scope.row.desc }}</span>
@@ -65,24 +39,18 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="用户名" prop="title">
-          <el-input v-model="temp.username"/>
-        </el-form-item>
-        <el-form-item label="手机号" prop="title">
-          <el-input v-model="temp.telephone"/>
-        </el-form-item>
-        <el-form-item label="邮箱" prop="title">
-          <el-input v-model="temp.email"/>
+        <el-form-item label="名称" prop="title">
+          <el-input v-model="temp.name"/>
         </el-form-item>
         <el-form-item label="简介">
           <el-input :autosize="{ minRows: 2, maxRows: 4}" v-model="temp.desc" type="textarea" placeholder=""/>
         </el-form-item>
-        <el-form-item label="角色">
+        <el-form-item label="权限">
           <el-checkbox-group v-model="roles">
-            <el-checkbox label="用户管理员" name="role"/>
-            <el-checkbox label="系统管理员" name="role"/>
+            <el-checkbox label="用户管理" name="role"/>
+            <el-checkbox label="文章管理" name="role"/>
             <el-checkbox label="财务" name="role"/>
-            <el-checkbox label="业务管理员" name="role"/>
+            <el-checkbox label="业务管理" name="role"/>
           </el-checkbox-group>
         </el-form-item>
       </el-form>
@@ -96,13 +64,13 @@
 </template>
 
 <script>
-import { fetchList, createUser, updateUser } from '@/api/user'
+import { fetchList, createRole, updateRole } from '@/api/role'
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import { getToken } from '@/utils/auth'
 
 export default {
-  name: 'UserList',
+  name: 'RoleList',
   components: { Pagination },
   filters: {
 
@@ -116,18 +84,14 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        username: '',
-        email: '',
-        telephone: '',
+        name: '',
         sort: '+id',
         access_token: getToken()
       },
       statusOptions: ['published', 'draft', 'deleted'],
       temp: {
         id: undefined,
-        username: '',
-        email: '',
-        telephone: '',
+        name: '',
         desc: '',
         timestamp: new Date(),
         status: 'published'
@@ -135,11 +99,11 @@ export default {
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
-        update: '用户编辑',
-        create: '创建用户'
+        update: "角色编辑",
+        create: "创建角色"
       },
       rules: {
-        username: [{ required: true, message: 'name is required', trigger: 'blur' }]
+        name: [{ required: true, message: 'name is required', trigger: 'blur' }]
       },
       roles: []
     }
@@ -188,8 +152,6 @@ export default {
       this.temp = {
         id: undefined,
         uaername: '',
-        telephone: '',
-        email: '',
         desc: '',
         timestamp: new Date(),
         status: 'published'
